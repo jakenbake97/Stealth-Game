@@ -26,11 +26,11 @@ protected:
 	USkeletalMeshComponent* Mesh1PComponent;
 
 	/** Gun mesh: 1st person view (seen only by self) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mesh")
 	USkeletalMeshComponent* GunMeshComponent;
 
 	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera")
 	UCameraComponent* CameraComponent;
 
 public:
@@ -45,11 +45,14 @@ public:
 	USoundBase* FireSound;
 
 	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 	UAnimSequence* FireAnimation;
 
+	UPROPERTY(BlueprintReadOnly, Category="Gameplay")
+	bool bIsCarryingObjective;
+
 protected:
-	
+
 	/** Fires a projectile. */
 	void Fire();
 
@@ -63,10 +66,14 @@ protected:
 
 public:
 	/** Returns Mesh1P subobject **/
-	USkeletalMeshComponent* GetMesh1P() const { return Mesh1PComponent; }
+	USkeletalMeshComponent* GetMesh1P() const
+	{
+		return Mesh1PComponent;
+	}
 
 	/** Returns FirstPersonCameraComponent subobject **/
-	UCameraComponent* GetFirstPersonCameraComponent() const { return CameraComponent; }
-
+	UCameraComponent* GetFirstPersonCameraComponent() const
+	{
+		return CameraComponent;
+	}
 };
-
