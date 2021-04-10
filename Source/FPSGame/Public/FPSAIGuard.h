@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
 
 #include "FPSAIGuard.generated.h"
+
+class ATargetPoint;
 
 UENUM(BlueprintType)
 enum class EAIState : uint8
@@ -50,6 +53,16 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category="AI")
 	void OnStateChanged(EAIState NewState);
+
+	UPROPERTY(EditInstanceOnly, Category="AI")
+	TArray<ATargetPoint*> TargetPoints;
+
+	int CurrentTargetPoint;
+
+	UPROPERTY(EditInstanceOnly, Category="AI", meta = (EditCondition = "TargetPoints"))
+	float TargetDistance = 50.0f;
+
+	void MoveToNextPoint();
 	
 public:	
 	// Called every frame

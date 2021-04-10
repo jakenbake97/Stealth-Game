@@ -3,6 +3,7 @@
 #include "FPSProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AFPSProjectile::AFPSProjectile() 
 {
@@ -41,6 +42,8 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 	}
 
 	MakeNoise(1.0f, GetInstigator());
+
+	UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 
 	Destroy();
 }

@@ -5,7 +5,9 @@
 
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Perception/PawnSensingComponent.h"
+#include "Engine/TargetPoint.h"
 
 // Sets default values
 AFPSAIGuard::AFPSAIGuard()
@@ -61,6 +63,8 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
 
 	SetGuardState(EAIState::Suspicious);
+
+	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), GetActorLocation());
 }
 
 void AFPSAIGuard::SetGuardState(EAIState NewState)
@@ -72,10 +76,35 @@ void AFPSAIGuard::SetGuardState(EAIState NewState)
 	OnStateChanged(GuardState);
 }
 
+void AFPSAIGuard::MoveToNextPoint()
+{
+	if (CurrentTargetPoint == TargetPoints.Num() - 1)
+	{
+		CurrentTargetPoint = 0;
+		return;
+	}
+	
+	CurrentTargetPoint++;
+}
+
 // Called every frame
 void AFPSAIGuard::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (TargetPoints.Num() <= 0)
+	{
+		return;
+	}
+
+	if (GuardState == EAIState::Idle)
+	{
+		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), TargetPoints[CurrentTargetPoint]);
+		if (FVector::Dist(GetActorLocation(), TargetPoints[CurrentTargetPoint]->GetActorLocation()) <= TargetDistance)
+		{
+			MoveToNextPoint();
+		}
+	}
 }
 
 void AFPSAIGuard::ResetOrientation()
