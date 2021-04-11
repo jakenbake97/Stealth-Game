@@ -5,6 +5,7 @@
 
 #include "DrawDebugHelpers.h"
 #include "FPSGameMode.h"
+#include "UnrealNetwork.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Perception/PawnSensingComponent.h"
 #include "Engine/TargetPoint.h"
@@ -67,13 +68,24 @@ void AFPSAIGuard::OnNoiseHeard(APawn* NoiseInstigator, const FVector& Location, 
 	UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), GetActorLocation());
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStateChanged(GuardState);
+}
+
 void AFPSAIGuard::SetGuardState(EAIState NewState)
 {
 	if (GuardState == NewState) return;
 
 	GuardState = NewState;
+	OnRep_GuardState();
+}
 
-	OnStateChanged(GuardState);
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
 
 void AFPSAIGuard::MoveToNextPoint()
